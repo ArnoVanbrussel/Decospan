@@ -1,0 +1,42 @@
+
+version: '3.9'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /etc/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - /etc/prometheus:/certificates
+    ports:
+      - "9090:9090"
+    networks:
+      - prom_network
+    extra_hosts:
+      - "mct-deco-nodeexporter.com:10.201.19.5"
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    volumes:
+      - /etc/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
+    networks:
+      - prom_network
+
+  prom2teams:
+    image: idealista/prom2teams:latest
+    container_name: prom2teams
+    environment:
+      - PROM2TEAMS_GROUP_ALERTS_BY=alertname
+      - PROM2TEAMS_CONNECTOR=https://decospan0.webhook.office.com/webhookb2/fa94e8ce-c01c-4fd1-9798-900a4412fea9@e64aa77f-1efc-40b8-982d-4e510e65203d/IncomingWebhook/b2cbd17ceb7f438abd31daf430266ea2>
+    ports:
+      - "8089:8089"
+    networks:
+      - prom_network
+
+networks:
+  prom_network:
+    driver: bridge
