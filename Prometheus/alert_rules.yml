@@ -46,7 +46,7 @@ groups:
   - name: instance_down_windows
     rules:
       - alert: InstanceDownWindows
-        expr: time() - windows_system_system_up_time{job="wmi_secure"} == 0
+        expr: absent(windows_system_system_up_time{job="wmi_secure"}) or windows_system_system_up_time{job="wmi_secure"} == 0
         for: 10s
         labels:
           severity: critical
