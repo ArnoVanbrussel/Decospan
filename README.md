@@ -2,8 +2,6 @@
 
 ## Project: Network & Application Monitoring
 
-### Tags: #AGILE #SPRINTS #TEAMWORK #COMPANYPROJECTS #DEADLINES
-
 ### Company: Decospan
 
 ### Title: Network & Application Monitoring
@@ -30,8 +28,6 @@ If the project progresses smoothly, exploring the possibility of SNMP monitoring
 ---
 
 ## Project: Remote Monitoring and Management Solution
-
-### Tags: #AGILE #SPRINTS #TEAMWORK #COMPANYPROJECTS #DEADLINES
 
 ### Company: Decospan
 
