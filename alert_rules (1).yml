@@ -1,0 +1,88 @@
+groups:
+  - name: instance_down_linux
+    rules:
+      - alert: InstanceDown
+        expr: up{job="node_secure"} == 0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} is down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute."
+
+  - name: high_cpu_usage_linux
+    rules:
+      - alert: HighCPUUsage
+        expr: (100 - (100 * avg by (instance, job) (irate(node_cpu_seconds_total{mode="idle", job="node_secure"}[1m])))) > 95
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage on {{ $labels.instance }} has been above 90% for more than 1 minute."
+
+  - name: high_ram_usage_linux
+    rules:
+      - alert: HighRAMUsage
+        expr: (100 - ((node_memory_MemAvailable_bytes{job="node_secure"} / node_memory_MemTotal_bytes{job="node_secure"}) * 100)) > 75
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "High RAM usage on {{ $labels.instance }}"
+          description: "RAM usage on {{ $labels.instance }} has been above 95% for more than 1 minute."
+
+  - name: high_disk_space_usage_linux
+    rules:
+      - alert: HighDiskSpaceUsage
+        expr: 100 - ((node_filesystem_avail_bytes{device="/dev/sda1", mountpoint="/", job="node_secure"} / node_filesystem_size_bytes{job="node_secure", mountpoint="/", device="/dev/sda1"}) * 100) > 80
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High disk space usage on {{ $labels.instance }}"
+          description: "Disk space usage on {{ $labels.instance }} has been above 80% for more than 1 minute."
+
+  - name: instance_down_windows
+    rules:
+      - alert: InstanceDownWindows
+        expr: time() - windows_system_system_up_time{job="wmi_secure"} == 0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} is down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute."
+
+  - name: high_cpu_usage_windows
+    rules:
+      - alert: HighCPUUsageWindows
+        expr: ceil(sum by (instance) (rate(windows_cpu_processor_utility_total{job="wmi_secure"}[1m])) / sum by (instance) (rate(windows_cpu_processor_rtc_total{job="wmi_secure"}[1m]))) > 95
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage on {{ $labels.instance }} has been above 95% for more than 1 minute."
+
+  - name: high_ram_usage_windows
+    rules:
+      - alert: HighRAMUsageWindows
+        expr: 100 - (100 * windows_os_physical_memory_free_bytes{job="wmi_secure"} / windows_cs_physical_memory_bytes{job="wmi_secure"}) > 95
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "High RAM usage on {{ $labels.instance }}"
+          description: "RAM usage on {{ $labels.instance }} has been above 95% for more than 1 minute."
+
+  - name: high_disk_space_usage_windows
+    rules:
+      - alert: HighDiskSpaceUsageWindows
+        expr: 100 - ((windows_logical_disk_free_bytes{job="wmi_secure", volume="C:"} / windows_logical_disk_size_bytes{job="wmi_secure", volume="C:"}) * 100) > 95
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High disk space usage on {{ $labels.instance }}"
+          description: "Disk space usage on {{ $labels.instance }} has been above 95% for more than 1 minute."
