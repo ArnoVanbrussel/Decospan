@@ -1,0 +1,22 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name deco-prom.com;
+
+    location / {
+        proxy_pass http://localhost:9100;
+    }
+}
+
+server {
+    listen 9123 ssl;
+    listen [::]:9123 ssl;
+    server_name deco-prom.com;
+
+    ssl_certificate /etc/nginx/ssl/prometheus.crt;
+    ssl_certificate_key /etc/nginx/ssl/prometheus.key;
+
+    location / {
+        proxy_pass http://localhost:9100;
+    }
+}
